@@ -2,39 +2,86 @@ import React, { Component } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 
+const OPERATION = ['c', '÷', '×', '-', '+'];
+const NUMS = [[7, 8, 9], [4, 5, 6], [1, 2, 3], ['.', 0, '=']];
+
 export default class MainScreen extends Component {
     constructor() {
         super();
         this.state = {
-
+            resultText: ""
         };
+        this.resultText = "";
+    }
+
+
+    calculateResult() {
+        const text = this.state.resultText;
+    }
+
+    buttonPressed(text) {
+
+
+        if (text == '=') return this.calculateResult();
+
+        this.setState({
+            resultText: this.state.resultText + text
+        })
+
+    }
+
+    operate(operation) {
+        switch (operation) {
+            case 'c':
+                let { resultText } = this.state;
+
+                if (resultText && resultText !== '') {
+                    let text = resultText.split('');
+                    text.pop();
+                    let newText = text.join('');
+                    console.log("newText", newText);
+                    this.setState({
+                        resultText: newText
+                    })
+                    return;
+                }
+            case '+':
+            case '-':
+            case '÷':
+            case '×':
+                const lastChar = this.state.resultText.split('').pop();
+                if (OPERATION.indexOf(lastChar) > 0) {
+                    return
+                }
+
+                if (this.state.resultText == '') return
+                this.setState({ resultText: this.state.resultText + operation })
+        }
     }
 
     render() {
         let rows = [];
-        const nums = [[1, 2, 3], [4, 5, 6], [7, 8, 9], ['.', 0, '=']];
-        for (let i = 0; i < nums.length; i++) {
+        for (let i = 0; i < NUMS.length; i++) {
             let row = [];
-            for (let j = 0; j < nums[i].length; j++) {
-                row.push(<TouchableOpacity style={styles.btn}>
-                    <Text style={styles.btnText}>{nums[i][j]}</Text>
+            for (let j = 0; j < NUMS[i].length; j++) {
+                row.push(<TouchableOpacity onPress={() => this.buttonPressed(NUMS[i][j])} style={styles.btn}>
+                    <Text style={styles.btnText}>{NUMS[i][j]}</Text>
                 </TouchableOpacity>)
             }
             rows.push(<View style={styles.rowButtons}>{row}</View>);
         }
 
-        const operation = ['÷', '×', '-', '+'];
         let ops = [];
-        for (let i = 0; i < operation.length; i++) {
-            ops.push(<TouchableOpacity style={styles.btn}>
-                <Text style={styles.btnText}>{operation[i]}</Text>
+        for (let i = 0; i < OPERATION.length; i++) {
+            ops.push(<TouchableOpacity style={styles.btn} onPress={() => this.operate(OPERATION[i])}>
+                <Text style={styles.btnText} >{OPERATION[i]}</Text>
             </TouchableOpacity>);
         }
 
         return (
             <View style={styles.container}>
                 <View style={styles.result}>
-                    <Text style={styles.resultText}>11*22</Text></View>
+                    <Text style={styles.resultText}>{this.state.resultText}</Text></View>
                 <View style={styles.calculation}>
                     <Text style={styles.calculationText}>5544</Text></View>
                 <View style={styles.buttons}>
@@ -80,7 +127,9 @@ const styles = StyleSheet.create({
     },
     operation: {
         flex: 1,
-        backgroundColor: 'blue'
+        backgroundColor: 'blue',
+        alignSelf: 'stretch',
+        alignItems: 'stretch',
     },
     resultText: {
         fontSize: 30,
@@ -102,6 +151,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'stretch',
         justifyContent: 'center',
+        backgroundColor: 'gray'
     },
     btnText: {
         fontSize: 25,
