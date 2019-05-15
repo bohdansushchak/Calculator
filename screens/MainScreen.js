@@ -9,20 +9,51 @@ export default class MainScreen extends Component {
     constructor() {
         super();
         this.state = {
-            resultText: ""
+            resultText: "",
+            calculationText: ""
         };
-        this.resultText = "";
     }
 
+    validate() {
+        const text = this.state.resultText
+
+        switch (text.slice(-1)) {
+            case '+':
+            case '-':
+            case '÷':
+            case '×':
+                return false
+        }
+        return true;
+    }
 
     calculateResult() {
-        const text = this.state.resultText;
+        let text = this.state.resultText;
+
+        const charTab = text.split('');
+
+        for (let i = 0; i < charTab.length; i++) {
+            let char = charTab[i];
+            if (char == '×')
+                charTab[i] = '*';
+            if (char == '÷')
+                charTab[i] = '/'
+        }
+
+        text = charTab.join('');
+
+        console.log("charTab", text);
+
+        const calculationText = eval(text);
+        this.setState({
+            calculationText
+        });
     }
 
     buttonPressed(text) {
+        if (text == '=') return this.validate() && this.calculateResult();
 
-
-        if (text == '=') return this.calculateResult();
+        if (text == '.') return this.operate(text);
 
         this.setState({
             resultText: this.state.resultText + text
@@ -78,12 +109,13 @@ export default class MainScreen extends Component {
             </TouchableOpacity>);
         }
 
+        const { resultText, calculationText } = this.state;
         return (
             <View style={styles.container}>
                 <View style={styles.result}>
-                    <Text style={styles.resultText}>{this.state.resultText}</Text></View>
+                    <Text style={styles.resultText}>{resultText}</Text></View>
                 <View style={styles.calculation}>
-                    <Text style={styles.calculationText}>5544</Text></View>
+                    <Text style={styles.calculationText}>{calculationText}</Text></View>
                 <View style={styles.buttons}>
                     <View style={styles.numbers}>
                         {rows}
@@ -151,7 +183,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         alignSelf: 'stretch',
         justifyContent: 'center',
-        backgroundColor: 'gray'
     },
     btnText: {
         fontSize: 25,
