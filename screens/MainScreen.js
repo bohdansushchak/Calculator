@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 
-const OPERATION = ['c', '÷', '×', '-', '+'];
+const OPERATION = ['DEL', '÷', '×', '-', '+'];
 const NUMS = [[7, 8, 9], [4, 5, 6], [1, 2, 3], ['.', 0, '=']];
 
 export default class MainScreen extends Component {
@@ -61,9 +61,22 @@ export default class MainScreen extends Component {
 
     }
 
+    equalsLongPress = () => {
+        /*const { calculationText } = this.state;
+        if (calculationText != '') {
+            this.setState({
+                resultText: calculationText,
+                calculationText: ''
+            })
+        }
+        */
+
+        alert("long press");
+    }
+
     operate(operation) {
         switch (operation) {
-            case 'c':
+            case 'DEL':
                 let { resultText } = this.state;
 
                 if (resultText && resultText !== '') {
@@ -94,33 +107,40 @@ export default class MainScreen extends Component {
         let rows = [];
         for (let i = 0; i < NUMS.length; i++) {
             let row = [];
-            for (let j = 0; j < NUMS[i].length; j++) {
-                row.push(<TouchableOpacity onPress={() => this.buttonPressed(NUMS[i][j])} style={styles.btn}>
+            for (let j = 0; j < NUMS[i].length; j++) {//onLongPress
+                let button = <TouchableOpacity onPress={() => this.buttonPressed(NUMS[i][j])}
+                    key={NUMS[i][j]}
+                    style={styles.btn}
+                    activeOpacity={0.6}
+                    onLongPress={this.equalsLongPress}
+                >
                     <Text style={styles.btnText}>{NUMS[i][j]}</Text>
-                </TouchableOpacity>)
+                </TouchableOpacity>
+
+                row.push(button)
             }
-            rows.push(<View style={styles.rowButtons}>{row}</View>);
+            rows.push(<View key={NUMS[i]} style={styles.rowButtons}>{row}</View>);
         }
 
         let ops = [];
         for (let i = 0; i < OPERATION.length; i++) {
-            ops.push(<TouchableOpacity style={styles.btn} onPress={() => this.operate(OPERATION[i])}>
-                <Text style={styles.btnText} >{OPERATION[i]}</Text>
+            ops.push(<TouchableOpacity style={styles.btn} onPress={() => this.operate(OPERATION[i])} key={OPERATION[i]}>
+                <Text style={styles.operationText} >{OPERATION[i]}</Text>
             </TouchableOpacity>);
         }
 
         const { resultText, calculationText } = this.state;
         return (
             <View style={styles.container}>
-                <View style={styles.result}>
+                <View style={styles.resultContainer}>
                     <Text style={styles.resultText}>{resultText}</Text></View>
-                <View style={styles.calculation}>
+                <View style={styles.calculationContainer}>
                     <Text style={styles.calculationText}>{calculationText}</Text></View>
-                <View style={styles.buttons}>
+                <View style={styles.buttonsContainer}>
                     <View style={styles.numbers}>
                         {rows}
                     </View>
-                    <View style={styles.operation}>{ops}</View>
+                    <View style={styles.operationContainer}>{ops}</View>
                 </View>
 
             </View>
@@ -134,32 +154,32 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    result: {
+    resultContainer: {
         flex: 2,
         backgroundColor: "white",
         justifyContent: "center",
         alignItems: "flex-end"
     },
-    calculation: {
+    calculationContainer: {
         flex: 1,
-        backgroundColor: "green",
+        backgroundColor: "white",
         justifyContent: "center",
         alignItems: "flex-end"
     },
-    buttons: {
+    buttonsContainer: {
         flex: 7,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        backgroundColor: '#434343'
     },
     numbers: {
         flex: 3,
-        backgroundColor: 'yellow',
         justifyContent: "space-around",
         alignSelf: 'stretch',
         alignItems: 'stretch',
     },
-    operation: {
+    operationContainer: {
         flex: 1,
-        backgroundColor: 'blue',
+        backgroundColor: '#636363',
         alignSelf: 'stretch',
         alignItems: 'stretch',
     },
@@ -169,7 +189,7 @@ const styles = StyleSheet.create({
     },
     calculationText: {
         fontSize: 24,
-        color: "white"
+        color: "black"
     },
     rowButtons: {
         flexDirection: 'row',
@@ -185,6 +205,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     btnText: {
-        fontSize: 25,
+        fontSize: 28,
+        color: 'white'
+    },
+    operationText: {
+        fontSize: 20,
+        color: 'white'
     }
 });
