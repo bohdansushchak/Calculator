@@ -53,25 +53,34 @@ export default class MainScreen extends Component {
     buttonPressed(text) {
         if (text == '=') return this.validate() && this.calculateResult();
 
-        if (text == '.') return this.operate(text);
-
         this.setState({
             resultText: this.state.resultText + text
         })
 
     }
 
-    equalsLongPress = () => {
-        /*const { calculationText } = this.state;
-        if (calculationText != '') {
-            this.setState({
-                resultText: calculationText,
-                calculationText: ''
-            })
+    btnLongPress(key) {
+        switch (key) {
+            case '=':
+                const { calculationText } = this.state;
+                if (calculationText !== '') {
+                    this.setState({
+                        resultText: calculationText.toString(),
+                        calculationText: ''
+                    })
+                }
+                break;
         }
-        */
+    }
 
-        alert("long press");
+    operateLongPress(key) {
+        switch (key) {
+            case 'DEL':
+                this.setState({ resultText: "", calculationText: '' })
+                break;
+
+
+        }
     }
 
     operate(operation) {
@@ -112,11 +121,10 @@ export default class MainScreen extends Component {
                     key={NUMS[i][j]}
                     style={styles.btn}
                     activeOpacity={0.6}
-                    onLongPress={this.equalsLongPress}
+                    onLongPress={() => this.btnLongPress(NUMS[i][j])}
                 >
                     <Text style={styles.btnText}>{NUMS[i][j]}</Text>
                 </TouchableOpacity>
-
                 row.push(button)
             }
             rows.push(<View key={NUMS[i]} style={styles.rowButtons}>{row}</View>);
@@ -124,7 +132,12 @@ export default class MainScreen extends Component {
 
         let ops = [];
         for (let i = 0; i < OPERATION.length; i++) {
-            ops.push(<TouchableOpacity style={styles.btn} onPress={() => this.operate(OPERATION[i])} key={OPERATION[i]}>
+            ops.push(<TouchableOpacity
+                style={styles.btn}
+                onPress={() => this.operate(OPERATION[i])}
+                key={OPERATION[i]}
+                activeOpacity={0.6}
+                onLongPress={() => this.operateLongPress(OPERATION[i])}>
                 <Text style={styles.operationText} >{OPERATION[i]}</Text>
             </TouchableOpacity>);
         }
