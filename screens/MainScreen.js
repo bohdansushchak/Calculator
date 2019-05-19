@@ -228,11 +228,13 @@ const styles = StyleSheet.create({
     },
     resultText: {
         fontSize: 30,
-        color: "black"
+        color: "black",
+        fontFamily: 'SonsieOne'
     },
     calculationText: {
         fontSize: 24,
-        color: "black"
+        color: "black",
+        fontFamily: 'SonsieOne'
     },
     rowButtons: {
         flexDirection: 'row',
@@ -249,10 +251,12 @@ const styles = StyleSheet.create({
     },
     btnText: {
         fontSize: 28,
-        color: 'white'
+        color: 'white',
+        fontFamily: 'SonsieOne'
     },
     operationText: {
         fontSize: 20,
-        color: 'white'
+        color: 'white',
+        fontFamily: 'SonsieOne'
     }
 });
