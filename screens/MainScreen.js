@@ -6,12 +6,15 @@ const OPERATION = ['DEL', '÷', '×', '-', '+'];
 const NUMS = [[7, 8, 9], [4, 5, 6], [1, 2, 3], ['.', 0, '=']];
 
 export default class MainScreen extends Component {
+
     constructor() {
         super();
         this.state = {
             resultText: "",
             calculationText: ""
         };
+
+        this.lastPressedOperation = '';
     }
 
     validate() {
@@ -50,8 +53,24 @@ export default class MainScreen extends Component {
         });
     }
 
+    isDotValidate() {
+        let { resultText } = this.state;
+        let lastNumber = '';
+        if (!this.lastPressedOperation)
+            lastNumber = resultText;
+        else
+            lastNumber = resultText.split(this.lastPressedOperation).pop();
+
+        console.log("isDotValidate last", this.lastPressedOperation);
+        console.log("isDotValidate", lastNumber);
+
+        return !isNaN(lastNumber + '.');
+    }
+
     buttonPressed(text) {
         if (text == '=') return this.validate() && this.calculateResult();
+
+        if (text == '.' && !this.isDotValidate()) return;
 
         this.setState({
             resultText: this.state.resultText + text
@@ -78,9 +97,15 @@ export default class MainScreen extends Component {
             case 'DEL':
                 this.setState({ resultText: "", calculationText: '' })
                 break;
-
-
         }
+    }
+
+    findLastOperation(tab) {
+        tab.forEach(element => {
+            console.log("findLastOperation", element);
+            if (OPERATION.indexOf(element) > 0)
+                this.lastPressedOperation = element;
+        });
     }
 
     operate(operation) {
@@ -90,7 +115,11 @@ export default class MainScreen extends Component {
 
                 if (resultText && resultText !== '') {
                     let text = resultText.split('');
-                    text.pop();
+                    const charRemoved = text.pop();
+                    if (OPERATION.indexOf(charRemoved) > 0) {
+                        this.findLastOperation(text)
+                    }
+
                     let newText = text.join('');
                     console.log("newText", newText);
                     this.setState({
@@ -108,6 +137,7 @@ export default class MainScreen extends Component {
                 }
 
                 if (this.state.resultText == '') return
+                this.lastPressedOperation = operation;
                 this.setState({ resultText: this.state.resultText + operation })
         }
     }
